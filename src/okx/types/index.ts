@@ -253,6 +253,7 @@ export interface SwapParams extends BaseParams {
     computeUnitPrice?: string;
     computeUnitLimit?: string;
     callDataMemo?: string;
+    nonce?: number;
 }
 
 export interface SwapSimulationParams {
@@ -324,6 +325,7 @@ export interface ApproveTokenParams {
     chainIndex: string;
     tokenContractAddress: string;
     approveAmount: string;
+    nonce?: number;
 }
 
 export interface ApproveTokenResult {
