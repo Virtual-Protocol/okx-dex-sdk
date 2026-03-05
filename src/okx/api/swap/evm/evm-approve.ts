@@ -65,18 +65,6 @@ export class EVMApproveExecutor implements SwapExecutor {
         }
 
         const dexContractAddress = await this.getDexContractAddress(chainIndex, tokenAddress, amount);
-
-        // Check current allowance
-        const currentAllowance = await this.getAllowance(
-            tokenAddress,
-            this.config.evm.wallet.address,
-            dexContractAddress
-        );
-
-        if (currentAllowance >= BigInt(amount)) {
-            throw new Error("Token already approved for the requested amount");
-        }
-
         try {
             // Execute the approval transaction
             const result = await this.executeApprovalTransaction(
