@@ -11,7 +11,6 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "clean": "rm -rf dist",
-    "prepare": "npm run clean && npm run build",
     "prepublishOnly": "npm test",
     "example:evm-quote": "npx ts-node src/okx/examples/evm/evm-quote.ts",
     "example:evm-swap": "npx ts-node src/okx/examples/evm/evm-swap.ts",
