@@ -421,6 +421,7 @@ export class DexAPI {
                 params.chainIndex,
                 params.tokenContractAddress,
                 params.approveAmount,
+                params.nonce
             );
 
             // Return formatted result
@@ -429,16 +430,6 @@ export class DexAPI {
                 explorerUrl: `${networkConfig.explorer}/${result.transactionHash}`
             };
         } catch (error) {
-            // Check if it's an "already approved" error, which is not a real error
-            if (error instanceof Error && error.message.includes("already approved")) {
-                // Return a mock result for already approved tokens
-                return {
-                    transactionHash: "",
-                    explorerUrl: "",
-                    alreadyApproved: true,
-                    message: "Token already approved for the requested amount"
-                } as any;
-            }
             // Otherwise, rethrow the error
             throw error;
         }

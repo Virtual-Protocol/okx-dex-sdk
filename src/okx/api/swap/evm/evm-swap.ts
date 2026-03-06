@@ -30,7 +30,7 @@ export class EVMSwapExecutor implements SwapExecutor {
         }
 
         try {
-            const result = await this.executeEvmTransaction(tx);
+            const result = await this.executeEvmTransaction(tx, params);
             return this.formatSwapResult(result.hash, routerResult);
         } catch (error) {
             console.error("Swap execution failed:", error);
@@ -38,7 +38,7 @@ export class EVMSwapExecutor implements SwapExecutor {
         }
     }
 
-    private async executeEvmTransaction(tx: any) {
+    private async executeEvmTransaction(tx: any, params: SwapParams) {
         if (!this.config.evm?.wallet) {
             throw new Error("EVM wallet required");
         }
@@ -49,8 +49,10 @@ export class EVMSwapExecutor implements SwapExecutor {
                 console.log("Preparing transaction...");
                 const gasMultiplier = BigInt(500); // 5x standard multiplier
                 
-                // Get current nonce
-                const nonce = await this.provider.getTransactionCount(this.config.evm.wallet.address);
+                // Use custom nonce if provided, otherwise fetch from chain
+                const nonce = params.nonce !== undefined
+                    ? params.nonce + retryCount
+                    : (await this.provider.getTransactionCount(this.config.evm.wallet.address)) + retryCount;
                 
                 // Get current gas prices
                 const feeData = await this.provider.getFeeData();
@@ -61,7 +63,7 @@ export class EVMSwapExecutor implements SwapExecutor {
                     data: tx.data,
                     to: tx.to,
                     value: tx.value || '0',
-                    nonce: nonce + retryCount, // Increment nonce for each retry
+                    nonce,
                     gasLimit: BigInt(tx.gas || 0) * gasMultiplier / BigInt(100),
                     maxFeePerGas: (baseFee * gasMultiplier) / BigInt(100),
                     maxPriorityFeePerGas: (priorityFee * gasMultiplier) / BigInt(100)
